@@ -1,5 +1,7 @@
 NAME	= inception
 
+PSS	= ${shell docker ps -qa | wc -l}
+
 all:
 	@printf "Launch configuration ${NAME}\n"
 	@bash ./srcs/requirements/wordpress/tools/make_dir.sh
@@ -24,7 +26,9 @@ clean:	down
 
 fclean:	
 	@printf "Total clean\n"
-	@docker stop $$(docker ps -pa)
+ifneq (${PSS},0)
+	@docker stop $$(docker ps -qa)
+endif
 	@docker system prune --all --force --volumes
 	@docker network prune --force
 	@docker volume prune --force
